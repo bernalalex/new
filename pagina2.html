@@ -1,0 +1,398 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productos | DIMEFERINDUSTRY</title>
+
+<style> 
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  color: white;
+}
+header {
+  padding: 25px 40px 80px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+}
+header h1 { margin: 0; font-size: 28px; }
+header p { margin: 5px 0 0; font-size: 14px; opacity: 0.8; }
+.volver {
+  position: absolute;
+  top: 28px;
+  right: 40px;
+  font-size: 26px;
+  text-decoration: none;
+  color: white;
+}
+.buscador {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+}
+.buscador input {
+  width: 100%;
+  padding: 14px 22px;
+  border-radius: 50px;
+  border: none;
+}
+
+
+.productos {
+  padding: 60px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.producto {
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 25px;
+  transition: .3s;
+}
+.producto:hover { transform: translateY(-6px); }
+.producto img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  cursor: pointer;
+}
+.producto button {
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== MODAL IMAGEN (A LA DERECHA) ===== */
+.modal-img {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.9);
+  display: none;
+  justify-content: center; /* CENTRO HORIZONTAL */
+  align-items: center;     /* CENTRO VERTICAL */
+  z-index: 999;
+}
+
+.modal-img.activo { display: flex; }
+
+.modal-img img {
+  max-width: 45%;
+  max-height: 75%;
+}
+
+.cerrar-img {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  font-size: 32px;
+  cursor: pointer;
+}
+
+/* BOTÓN CARRITO */
+.carrito-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: white;
+  color: black;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* CARRITO */
+.carrito {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.95);
+  display: none;
+  padding: 30px;
+}
+.carrito.activo { display: block; }
+.carrito-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.carrito-header span {
+  font-size: 26px;
+  cursor: pointer;
+}
+.carrito-contenido {
+  margin-top: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.carrito ul { list-style: none; padding: 0; }
+.carrito li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.carrito input[type="number"] {
+  width: 70px;
+  padding: 6px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+}
+
+/* MENSAJE */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(255,255,255,0.95);
+  color: #000;
+  padding: 14px 22px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: .4s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  z-index: 9999;
+}
+.toast.mostrar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>DIMEFERINDUSTRY</h1>
+<p>Distribuidora eléctrica de insumos industriales de Toluca</p>
+<div class="buscador">
+<input id="buscar" placeholder="Buscar productos...">
+</div>
+<a href="pagina1.html" class="volver">←</a>
+</header>
+
+<section class="productos" id="productos"></section>
+
+<div class="modal-img" id="modalImg">
+  <span class="cerrar-img" onclick="cerrarImagen()">✕</span>
+  <img id="imgGrande">
+</div>
+
+<button class="carrito-btn" onclick="abrirCarrito()">🛒</button>
+
+<div class="carrito" id="carrito">
+  <div class="carrito-header">
+    <span onclick="cerrarCarrito()">←</span>
+    <h2>Material agregado</h2>
+  </div>
+  <div class="carrito-contenido">
+    <ul id="lista"></ul>
+  </div>
+  <button onclick="cotizarTodo()">Cotizar todo</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const numero = "7221224599";
+
+const productosBase = [
+  {nombre:"Anclo Abrazadera Para Unicanal 13 Mm (1/2) SKU:AU12", img:"AU12.JPG"},
+  {nombre:"Anclo Abrazadera Para Unicanal 19mm (3/4) SKU: AU34", img:"AU34.JPG"},
+  {nombre:"Anclo Abrazadera Para Unicanal 25mm (1) SKU: AU100", img:"AU100.jpg"},
+   {nombre:"Anclo Abrazadera Para Unicanal 32mm ( 1 1/4) SKU: AU114", img:"AU114.JPG"},
+    {nombre:"Anclo Abrazadera Para Unicanal 38mm (1  1/2) SKU: AU112", img:"AU112.JPG"},
+     {nombre:"Anclo Abrazadera Para Unicanal 51mm (2  ) SKU: AU200", img:"AU200.JPG"},
+      {nombre:"Anclo Abrazadera Para Unicanal 63mm (2  1/2) SKU: AU212", img:"AU212.JPG"},
+       {nombre:"Anclo Abrazadera Para Unicanal 76mm (3    ) SKU: AU300", img:"AU300.JPG"},
+        {nombre:"Anclo Abrazadera Para Unicanal 101mm (4   ) SKU: AU400", img:"AU400.JPG"},
+
+
+
+         {nombre:"Anclo Contratuerca Cuerda NPS 13 mm (1/2) SKU: CT12", img:" CT12.JPG "},
+          {nombre:"Anclo Contratuerca Cuerda NPS 19 mm (3/4) SKU: CT34", img:"  CT34.JPG            "},
+           {nombre:"Anclo Contratuerca Cuerda NPS 25 mm (1) SKU: CT100", img:"  CT100.JPG  "},
+            {nombre:"Anclo Contratuerca Cuerda NPS 38 Mm (1  1/2) SKU: CT112", img:"  CT112.JPG "},
+             {nombre:"Anclo Contratuerca Cuerda NPS 32 Mm (1  1/4) SKU: CT114", img:"  CT114.JPG         "},
+              {nombre:"Anclo Abrazadera Para Unicanal 51 mm (2 ) SKU: CT200", img:" CT200.JPG  "},
+               {nombre:"Anclo Contratuerca Cuerda NPS 63 Mm (2  1/2) SKU: CT212", img:" CT212.JPG        "},
+                {nombre:"Anclo Contratuerca Cuerda NPS 76 Mm (3) SKU: CT300", img:" CT300.JPG       "},
+                 {nombre:"Anclo Abrazadera Para Unicanal 102mm (400) SKU: AU400", img:" CT400.JPG     "},
+
+
+ {nombre:"cable Vinanel Negro CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10N-MTO", img:" CAVIN10N-MTO.JPG     "},
+  {nombre:"Cable Vinanel Blanco CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10B-MTO", img:" CAVIN10B-MTO.JPG     "},
+   {nombre:"Cable Vinanel Rojo CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10R-MTO", img:" CAVIN10R-MTO.JPG     "},
+    {nombre:"Cable Vinanel Verde CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10V-MTO", img:" CAVIN10V-MTO.JPG     "},
+     {nombre:"Cable Vinanel Azul CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10Z-MTO", img:" CAVIN10Z-MTO.JPG     "},
+      {nombre:"Cable Vinanel Amarillo CONDUMEX Cal.10 Awg Por METRO SKU: CAVIN10A-MTO", img:" CAVIN10A-MTO.JPG     "},
+
+
+
+
+      {nombre:"Cable Vinanel NEGRO CONDUMEX Cal.1/0 Awg Por METRO SKU: CAVIN1/0N-MTO", img:" CAVIN1-0N-MTO.jpg     "},
+       {nombre:"Cable Vinanel VERDE  CONDUMEX Cal.1/0 Awg Por METRO SKU: CAVIN1/0V-MTO", img:"  CAVIN1-0V-MTO.jpg   "},
+        {nombre:"Cable Vinanel NEGRO ROLLO CONDUMEX Cal.1/0 Awg SKU: CAVIN1/0N", img:"  ROLLO.jpg   "},
+        
+       
+
+        
+
+];
+
+const cont = document.getElementById("productos");
+const carrito = [];
+
+function mostrarProductos(lista){
+  cont.innerHTML="";
+  lista.forEach(p=>{
+    cont.innerHTML+=`
+      <div class="producto">
+        <img src="${p.img}" onclick="verImagen('${p.img}')">
+        <h3>${p.nombre}</h3>
+        <button data-accion="agregar" data-nombre="${p.nombre}">Agregar</button>
+        <button data-accion="cotizar" data-nombre="${p.nombre}">Cotizar</button>
+      </div>
+    `;
+  });
+}
+mostrarProductos(productosBase);
+
+document.getElementById("buscar").addEventListener("input", e=>{
+  const query = normalizar(e.target.value);
+  if(!query){
+    mostrarProductos(productosBase);
+    return;
+  }
+
+  const resultados = productosBase
+    .map(p => {
+      const nombre = normalizar(p.nombre);
+      const score = calcularScore(query, nombre);
+      return { ...p, score };
+    })
+    .filter(p => p.score > 0)
+    .sort((a,b) => b.score - a.score);
+
+  mostrarProductos(resultados);
+});
+
+/* NORMALIZA TEXTO */
+function normalizar(txt){
+  return txt
+    .toLowerCase()
+    .replace(/1\s*\/\s*0/g,"1-0")       // unifica 1/0
+    .replace(/([a-z])([0-9])/g,"$1 $2") // separa letras y números
+    .replace(/([0-9])([a-z])/g,"$1 $2") // separa números y letras
+    .replace(/[()]/g,"")
+    .replace(/[^a-z0-9\s\-]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+
+/* SISTEMA DE PUNTUACIÓN (ESTILO GOOGLE) */
+function calcularScore(q, nombre){
+  let score = 0;
+
+  // Coincidencia exacta completa
+  if(nombre.includes(q)) score += 100;
+
+  const qTokens = q.split(" ");
+  const nTokens = nombre.split(" ");
+
+  qTokens.forEach(qt=>{
+    // palabra exacta
+    if(nTokens.includes(qt)) score += 30;
+
+    // coincidencia parcial
+    nTokens.forEach(nt=>{
+      if(nt.startsWith(qt)) score += 15;
+      else if(nt.includes(qt)) score += 8;
+    });
+  });
+
+  // BONUS: calibres y medidas exactas
+  if(q.includes("1-0") && nombre.includes("1-0")) score += 60;
+  if(q.includes("10") && nombre.includes("10")) score += 20;
+
+  return score;
+}
+
+
+
+function verImagen(src){
+  document.getElementById("imgGrande").src = src;
+  document.getElementById("modalImg").classList.add("activo");
+}
+function cerrarImagen(){
+  document.getElementById("modalImg").classList.remove("activo");
+}
+
+function mostrarToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("mostrar");
+  setTimeout(()=>t.classList.remove("mostrar"),3000);
+}
+
+document.addEventListener("click", e=>{
+  if(e.target.dataset.accion==="agregar") agregar(e.target.dataset.nombre);
+  if(e.target.dataset.accion==="cotizar") cotizarUno(e.target.dataset.nombre);
+});
+
+function agregar(nombre){
+  const existe = carrito.find(p=>p.nombre===nombre);
+  if(existe) existe.cantidad++;
+  else carrito.push({nombre, cantidad:1});
+  mostrarToast("Producto agregado al carrito");
+}
+
+function abrirCarrito(){ render(); document.getElementById("carrito").classList.add("activo"); }
+function cerrarCarrito(){ document.getElementById("carrito").classList.remove("activo"); }
+
+function render(){
+  const ul=document.getElementById("lista");
+  ul.innerHTML="";
+  carrito.forEach((p,i)=>{
+    ul.innerHTML+=`
+      <li>
+        <span>${i+1}. ${p.nombre}</span>
+        <input type="number" min="1" value="${p.cantidad}"
+          onchange="carrito[${i}].cantidad=this.value">
+        <button onclick="carrito.splice(${i},1);render()">✕</button>
+      </li>
+    `;
+  });
+}
+
+function cotizarUno(p){
+  window.open(`https://wa.me/52${numero}?text=${encodeURIComponent("Cotizar: "+p)}`);
+}
+function cotizarTodo(){
+  let txt="Cotización de materiales:%0A";
+  carrito.forEach((p,i)=>txt+=`${i+1}. ${p.nombre} - Cantidad: ${p.cantidad}%0A`);
+  window.open(`https://wa.me/52${numero}?text=${txt}`);
+  carrito.length=0; render(); cerrarCarrito();
+}
+</script>
+
+</body>
+</html>

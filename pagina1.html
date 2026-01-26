@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página de Venta de Material</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      padding: 25px 40px;
+      display: flex;
+      justify-content: flex-start;
+      gap: 80px;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      z-index: 10;
+    }
+
+    header a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 22px;
+      font-weight: 500;
+      transition: 0.3s;
+      margin-right: 18px;
+    }
+
+    header a:hover {
+      color: #b3b3b3;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0;
+    }
+
+    .sphere {
+      width: 350px;
+      height: 350px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      transform-style: preserve-3d;
+      opacity: 0;
+      animation: entradaSphere 1.2s ease-out forwards;
+    }
+
+    @keyframes entradaSphere {
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    .dot {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #ffffff;
+      border-radius: 50%;
+      opacity: 1;
+      box-shadow: 0 0 2px #ffffff;
+      will-change: transform;
+      transform: translate3d(0,0,0);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <!-- NOMBRE DE LA EMPRESA -->
+    <div style="font-size: 26px; font-weight: 600;">
+      DIMEFERINDUSTRY
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">
+      distribuidora electrica de insumos industriales de toluca
+    </div>
+
+    <!-- ENLACES -->
+    <a href="pagina2.html">Productos</a>
+
+    <a href="https://wa.me/527221224599?text=Quisiera%20pedirle%20la%20cotizacion%20de%20un%20material%20que%20vi%20en%20su%20pagina%20por%20favor" target="_blank">
+      Contacto
+    </a>
+
+    <!-- UBICACIÓN (AGREGADO) -->
+    <a href="https://www.google.com/maps/search/Toluca+Estado+de+México" target="_blank">
+      Ubicación
+    </a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="sphere" id="sphere" aria-hidden="true" role="img"></div>
+</div>
+
+<script>
+  const sphere = document.getElementById('sphere');
+
+  sphere.style.left = "65%";
+  sphere.style.top = "80%";
+
+  const dotsCount = 1500;
+  const originalPoints = [];
+  const radius = 160;
+
+  for (let i = 0; i < dotsCount; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+
+    const phi = Math.acos(1 - 2 * (i + 0.5) / dotsCount);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.sin(phi) * Math.sin(theta);
+    const z = radius * Math.cos(phi);
+
+    const vx = (Math.random() - 0.5) * 0.35;
+    const vy = (Math.random() - 0.5) * 0.35;
+    const vz = (Math.random() - 0.5) * 0.35;
+
+    originalPoints.push({ dot, x, y, z, vx, vy, vz });
+    sphere.appendChild(dot);
+  }
+
+  function animate() {
+    originalPoints.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.z += p.vz;
+
+      const dist = Math.sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+      const invDist = radius / dist;
+
+      p.x *= invDist;
+      p.y *= invDist;
+      p.z *= invDist;
+
+      p.dot.style.transform = `translate3d(${p.x}px, ${p.y}px, ${p.z}px)`;
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+
+</body>
+</html>
