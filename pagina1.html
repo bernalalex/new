@@ -69,17 +69,47 @@
       }
     }
 
-    .dot {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: #ffffff;
-      border-radius: 50%;
-      opacity: 1;
-      box-shadow: 0 0 2px #ffffff;
-      will-change: transform;
-      transform: translate3d(0,0,0);
+       transform: translate3d(0,0,0);
     }
+
+/* ============================= */
+/* 📱 RESPONSIVE PARA CELULARES */
+/* ============================= */
+@media (max-width: 768px) {
+
+  header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    padding: 20px;
+  }
+
+  header div {
+    width: 100%;
+  }
+
+  header a {
+    display: block;
+    margin: 8px 0;
+    font-size: 18px;
+  }
+
+  .container {
+    height: 100vh;
+    padding-top: 120px;
+  }
+
+  .sphere {
+    width: 250px;
+    height: 250px;
+    left: 50% !important;
+    top: 60% !important;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+  </style>
   </style>
 </head>
 <body>
@@ -167,4 +197,5 @@
 
 </body>
 </html>
+
 
