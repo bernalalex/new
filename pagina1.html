@@ -69,7 +69,7 @@
       }
     }
 
-    .dot {
+        .dot {
       position: absolute;
       width: 2px;
       height: 2px;
@@ -81,9 +81,7 @@
       transform: translate3d(0,0,0);
     }
 
-/* ============================= */
-/* 📱 RESPONSIVE CORRECTO */
-/* ============================= */
+/* RESPONSIVE */
 @media (max-width: 768px) {
 
   header {
@@ -103,19 +101,14 @@
     font-size: 16px;
   }
 
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .sphere {
     width: 260px;
     height: 260px;
-    transform: translate(-50%, -50%) scale(0.85);
   }
 
 }
+
+  </style>
 
   </style>
 
@@ -157,8 +150,6 @@
 <script>
   const sphere = document.getElementById('sphere');
 
-  sphere.style.left = "65%";
-  sphere.style.top = "80%";
 
   const dotsCount = 1500;
   const originalPoints = [];
@@ -207,5 +198,6 @@
 
 </body>
 </html>
+
 
 
