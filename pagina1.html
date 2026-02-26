@@ -69,45 +69,55 @@
       }
     }
 
-       transform: translate3d(0,0,0);
+    .dot {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #ffffff;
+      border-radius: 50%;
+      opacity: 1;
+      box-shadow: 0 0 2px #ffffff;
+      will-change: transform;
+      transform: translate3d(0,0,0);
     }
 
 /* ============================= */
-/* 📱 RESPONSIVE PARA CELULARES */
+/* 📱 RESPONSIVE CORRECTO */
 /* ============================= */
 @media (max-width: 768px) {
 
   header {
+    padding: 20px;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    gap: 15px;
-    padding: 20px;
+    gap: 10px;
   }
 
-  header div {
-    width: 100%;
+  header > div {
+    text-align: center;
   }
 
   header a {
-    display: block;
-    margin: 8px 0;
-    font-size: 18px;
+    display: inline-block;
+    margin: 6px 10px;
+    font-size: 16px;
   }
 
   .container {
-    height: 100vh;
-    padding-top: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .sphere {
-    width: 250px;
-    height: 250px;
-    left: 50% !important;
-    top: 60% !important;
-    transform: translate(-50%, -50%) scale(0.9);
+    width: 260px;
+    height: 260px;
+    transform: translate(-50%, -50%) scale(0.85);
   }
+
 }
+
+  </style>
 
   </style>
   </style>
