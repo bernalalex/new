@@ -41,26 +41,30 @@
       color: #b3b3b3;
     }
 
-    .container {
+ .container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 120px; /* espacio para el header fijo */
+  padding-top: 140px; /* espacio real del header */
   box-sizing: border-box;
 }
 
-    .sphere {
-  width: 350px;
-  height: 350px;
-  position: relative; /* ya no absolute */
+ .sphere {
+  width: clamp(220px, 35vw, 400px);
+  height: clamp(220px, 35vw, 400px);
+  position: relative;
   transform-style: preserve-3d;
   opacity: 0;
   animation: entradaSphere 1.2s ease-out forwards;
 }
 
-  @keyframes entradaSphere {
+    @keyframes entradaSphere {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
   to {
     opacity: 1;
     transform: scale(1);
@@ -102,6 +106,24 @@
   .sphere {
     width: 260px;
     height: 260px;
+  }
+
+}
+
+    @media (max-width: 768px) {
+
+  header {
+    padding: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+
+  header a {
+    display: block;
+    margin: 6px 0;
+    font-size: 16px;
   }
 
 }
@@ -196,6 +218,7 @@
 
 </body>
 </html>
+
 
 
 
