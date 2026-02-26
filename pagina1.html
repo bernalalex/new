@@ -42,7 +42,7 @@ header a:hover {
   color: #b3b3b3;
 }
 
-/* 🔥 CENTRADO PROFESIONAL REAL */
+/* CONTENEDOR CENTRADO */
 .container {
   width: 100%;
   height: 100dvh;
@@ -50,10 +50,10 @@ header a:hover {
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  padding-top: 130px; /* espacio exacto debajo del header */
+  padding-top: 140px;
 }
 
-/* 🔥 ESFERA CENTRADA PERFECTAMENTE */
+/* ESFERA */
 .sphere {
   width: clamp(260px, 25vw, 420px);
   height: clamp(260px, 25vw, 420px);
@@ -80,12 +80,11 @@ header a:hover {
   height: 2px;
   background: #ffffff;
   border-radius: 50%;
-  opacity: 1;
   box-shadow: 0 0 2px #ffffff;
   will-change: transform;
 }
 
-/* 🔥 RESPONSIVE PARA TELÉFONO */
+/* RESPONSIVE */
 @media (max-width: 768px) {
 
   header {
@@ -103,7 +102,7 @@ header a:hover {
   }
 
   .container {
-    padding-top: 190px; /* más espacio cuando header crece */
+    padding-top: 200px;
   }
 
   .sphere {
@@ -111,7 +110,6 @@ header a:hover {
     height: 260px;
   }
 }
-
 </style>
 </head>
 
@@ -140,7 +138,7 @@ header a:hover {
 </header>
 
 <div class="container">
-  <div class="sphere" id="sphere" aria-hidden="true" role="img"></div>
+  <div class="sphere" id="sphere"></div>
 </div>
 
 <script>
@@ -148,28 +146,36 @@ const sphere = document.getElementById('sphere');
 
 const dotsCount = 1500;
 const originalPoints = [];
-const radius = 160;
+let radius = sphere.offsetWidth / 2;
 
-for (let i = 0; i < dotsCount; i++) {
-  const dot = document.createElement('div');
-  dot.classList.add('dot');
+function createSphere() {
+  sphere.innerHTML = "";
+  originalPoints.length = 0;
+  radius = sphere.offsetWidth / 2;
 
-  const phi = Math.acos(1 - 2 * (i + 0.5) / dotsCount);
-  const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+  for (let i = 0; i < dotsCount; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
 
-  const x = radius * Math.sin(phi) * Math.cos(theta);
-  const y = radius * Math.sin(phi) * Math.sin(theta);
-  const z = radius * Math.cos(phi);
+    const phi = Math.acos(1 - 2 * (i + 0.5) / dotsCount);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
 
-  const vx = (Math.random() - 0.5) * 0.35;
-  const vy = (Math.random() - 0.5) * 0.35;
-  const vz = (Math.random() - 0.5) * 0.35;
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.sin(phi) * Math.sin(theta);
+    const z = radius * Math.cos(phi);
 
-  originalPoints.push({ dot, x, y, z, vx, vy, vz });
-  sphere.appendChild(dot);
+    const vx = (Math.random() - 0.5) * 0.35;
+    const vy = (Math.random() - 0.5) * 0.35;
+    const vz = (Math.random() - 0.5) * 0.35;
+
+    originalPoints.push({ dot, x, y, z, vx, vy, vz });
+    sphere.appendChild(dot);
+  }
 }
 
 function animate() {
+  const center = sphere.offsetWidth / 2;
+
   originalPoints.forEach(p => {
     p.x += p.vx;
     p.y += p.vy;
@@ -182,12 +188,16 @@ function animate() {
     p.y *= invDist;
     p.z *= invDist;
 
-    p.dot.style.transform = `translate3d(${p.x}px, ${p.y}px, ${p.z}px)`;
+    p.dot.style.transform =
+      `translate3d(${p.x + center}px, ${p.y + center}px, ${p.z}px)`;
   });
 
   requestAnimationFrame(animate);
 }
 
+window.addEventListener("resize", createSphere);
+
+createSphere();
 animate();
 </script>
 
